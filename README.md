@@ -17,6 +17,35 @@ POKE &HA201,0 ' switch to QWERTY
 
 #### Keymaps
 
+Each key is assigned an index based on its position in the keyboard matrix:
+
+`index = 8 × row + column`
+
+|  | **PB0** | **PB1** | **PB2** | **PB3** | **PB4** | **PB5** | **PB6** | **PB7** |
+| :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
+| **PA0** | @ | A | B | C | D | E | F | G |
+| **PA1** | H | I | J | K | L | M | N | O |
+| **PA2** | P | Q | R | S | T | U | V | W |
+| **PA3** | X | Y | Z | ↑ | ↓ | ← | → | ␣ |
+| **PA4** | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+| **PA5** | 8 | 9 | : | ; | , | - | . | / |
+| **PA6** | ENT | CLR | BRK | ALT | CTL | F1 | F2 | SHF |
+| **PA7** | --- | --- | --- | --- | --- | --- | --- | --- | 
+
+Here's the keyboard with each key labeled with its index:
+
+[![Color Computer 3 Keyboard with keys labeled with their indexes](media/keyboard-indexes.png)](http://www.keyboard-layout-editor.com/#/gists/774b47676b845b9e91fb037d498e3cbf)
+
+And here are the two default keyboard layouts:
+
+1. QWERTY
+[![Color Computer 3 - Default QWERTY keymap](media/qwerty.png)](http://www.keyboard-layout-editor.com/#/gists/d2e5a8e6329ac28292ea30f57f310c90)
+
+2. Dvorak
+[![Color Computer 3 - Default Dvorak keymap](media/dvorak-minimal-change.png)](http://www.keyboard-layout-editor.com/#/gists/2829afc8c7aa43548e0f8554a102ca7d)
+
+Finally, here's the complete keymap:
+
 <table>
   <thead>
     <tr>
