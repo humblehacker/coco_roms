@@ -317,7 +317,7 @@ USR0            RMB         2               ; USR 0 VECTOR
 ; 6,7 $C201
 ; 8,9 $C236
 
-KEYBUF          RMB         8               ; KEYBOARD MEMORY BUFFER
+KEYBUF          RMB         8               ; $0155-$015D KEYBOARD MEMORY BUFFER
 POTVAL          RMB         1               ; LEFT VERTICAL JOYSTICK DATA
                 RMB         1               ; LEFT HORIZONTAL JOYSTICK DATA
                 RMB         1               ; RIGHT VERTICAL JOYSTICK DATA

@@ -4486,14 +4486,12 @@ LA1BF           PULS        B,X,PC
 ; THIS ROUTINE GETS A KEYSTROKE FROM THE KEYBOARD IF A KEY
 ; IS DOWN. IT RETURNS ZERO TRUE IF THERE WAS NO KEY DOWN.
 
-KEYIN1          JMP         >KEYIN
-                RTS
-                RTS
-                RTS
-                RTS
-                RTS
-                RTS
-                RTS
+;KEYIN1          JMP         >KEYIN
+
+EXTKEYIN        JSR         TESTCTRLKEY     ; 3:
+                BEQ         EXTKEYINDONE    ; 2
+                JSR         CONTROLKEY      ; 3:
+EXTKEYINDONE    BRA         DEBOUNCE        ; 2:
 
 KEYIN           PSHS        U,X,B           ; SAVE REGISTERS
                 LDU         #PIA0           ; POINT U TO PIA0
@@ -4524,17 +4522,17 @@ LA1F4           ADDB        #$08            ; ADD 8 FOR EACH ROW OF KEYBOARD
                 ADDB        0,S             ; ADD IN THE COLUMN NUMBER
 ; NOW CONVERT THE VALUE IN ACCB INTO ASCII
 ; INPUT: ACCB = key index
-; OUTPUT: ACCA = ASCII code
-KEYMAPLOOKUP    LDX         #KEYMAP         ; point X to keymap
-                LSLB                        ; calculate map offset by ...
+; OUTPUT: ACCB = ASCII code
+KEYMAPLOOKUP    LSLB                        ; calculate map offset by ...
                 LSLB                        ; ... multiplying key index by 4 ...
                 ADDB        #WHICHMAP       ; ... and adding the selected map offset
                 BSR         TESTSHIFTKEY    ; is shift key down?
                 BEQ         DOLOOKUP        ; no, do lookup
                 INCB                        ; add one to get shifted value
-DOLOOKUP        ABX                         ; offset X to correct position in table
+DOLOOKUP        LDX         #KEYMAP         ; point X to keymap
+                ABX                         ; offset X to correct position in table
                 LDB         ,X              ; get ASCII code from keymap
-                BRA         DEBOUNCE        ; go check for debounce
+                BRA         EXTKEYIN        ; go check for debounce
 
 DEBOUNCE = LA20C
 LA20C           STB         0,S             ; TEMP STORE ASCII VALUE
@@ -13056,7 +13054,25 @@ KEYMAP          FCB         $40,$13,$40,$13
                 FCB         $04,$06,$04,$06
                 FCB         $05,$07,$05,$07
 
-                                            ; DC (220) bytes (4*55)
+                                            ; ---------------------
+                                            ; $DC (220) bytes (4*55)
+
+TESTCTRLKEY     LDA         #$EF            ; 2: Column 4
+                STA         2,U             ; 2:
+                LDA         ,U              ; 2:
+                COMA                        ; 2:
+                ANDA        #$40            ; 2:
+                RTS
+
+CONTROLKEY      CMPB        #$40            ; 2: Control keys are Ctrl-@ through Ctrl-_ ($40 - $5F)
+                BLT         CONTROLKEYRTS   ; 2:
+                CMPB        #$5F            ; 2:
+                BGT         CONTROLKEYRTS   ; 2:
+                SUBB        #$40            ; 2:
+CONTROLKEYRTS   RTS                         ; 1:
+
+                                            ; ---------------------
+                                            ; $15 (21) bytes
 
 ; This replaces the original block of "UNUSED GARBAGE BYTES?" with the new keymaps followed
 ; by a block of RTS instructions which together make up the 992 bytes of the original block.
@@ -13064,8 +13080,9 @@ KEYMAP          FCB         $40,$13,$40,$13
 
 THISGARBAGESIZE = $03E0 ; 992
 KEYMAPSIZE = $DC        ; 220
+KEYMAPCODESIZE = $15    ;  21
 
-                FILL        $39,THISGARBAGESIZE-KEYMAPSIZE
+                FILL        $39,THISGARBAGESIZE-KEYMAPSIZE-KEYMAPCODESIZE
 
 
 ; START OF ADDITIONAL VARIABLES USED BY SUPER EXTENDED BASIC
