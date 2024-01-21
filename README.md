@@ -4,9 +4,12 @@ Originally forked from [tomctomc/coco_roms](https://github.com/tomctomc/coco_rom
 
 This repo is more of an 8-bit assembly playground for me. I doubt these mods will be generally useful, but feel free to give it a try if you're interested. I've tried to keep existing code intact as much as possible to hopefully avoid breaking compatibility with other software that mucks around in the standard ROMs, but I make no guarantees.
 
-## Modifications so far
+**Modifications so far:**
 
-### Custom keymapping!
+- [Custom keymaps](#custom-keymaps)
+- [Functioning control key](#functioning-control-key)
+
+## Custom keymaps!
 
 You can switch between QWERTY and Dvorak by poking a 0 (QWERTY) or a 2 (DVORAK) to address `0xA201`. For example:
 
@@ -15,7 +18,7 @@ POKE &HA201,2 ' switch to Dvorak
 POKE &HA201,0 ' switch to QWERTY
 ```
 
-#### Keymaps
+### Keyboard matrix
 
 Each key is assigned an index based on its position in the keyboard matrix:
 
@@ -31,6 +34,8 @@ Each key is assigned an index based on its position in the keyboard matrix:
 | **PA5** | 8 | 9 | : | ; | , | - | . | / |
 | **PA6** | ENT | CLR | BRK | ALT | CTL | F1 | F2 | SHF |
 | **PA7** | --- | --- | --- | --- | --- | --- | --- | --- | 
+
+### The keymaps
 
 Here's the keyboard with each key labeled with its index:
 
@@ -712,11 +717,11 @@ Finally, here's the complete keymap:
       <td><strong>49</strong></td>
       <td><strong>0x31</strong></td>
       <td>FF</td>
-      <td>\\</td>
+      <td>\</td>
       <td>0x0C</td>
       <td>0x5C</td>
       <td>FF</td>
-      <td>\\</td>
+      <td>\</td>
       <td>0x0C</td>
       <td>0x5C</td>
     </tr>
@@ -789,3 +794,11 @@ Finally, here's the complete keymap:
 </table>
 
 You can also apply any arbitrary keymap from BASIC. See [colmak.bas](/colmak.bas) for an example.
+
+## Functioning Control Key
+
+By default, the control key in BASIC does nothing. Sure you can read its state by peeking the `KEYBUF` at `$0156`, but wouldn't it be nice if you could use it directly?
+
+This mod does just that. It will return to BASIC the appropriate ASCII code when Control is pressed along with any key from `@` to `Z`[^1]. For example, pressing `CTRL-M` will return `$0D`, the same code as pressing `ENTER` directly.
+
+[^1]: Really any key up to `_` (ASCII `$5F`), but the coco doesn't have any keys past ASCII `Z`.
